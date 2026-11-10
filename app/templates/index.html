@@ -1,0 +1,806 @@
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LABVISIT | Institutional Management System</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+    --navy:#14283f;
+    --navy-light:#203a56;
+    --blue:#315d83;
+    --teal:#168477;
+    --ink:#243447;
+    --muted:#718096;
+    --line:#e5eaf0;
+    --surface:#ffffff;
+    --background:#f4f6f8;
+    --soft:#edf3f7;
+    --success:#168477;
+    --danger:#c34f4f;
+    --shadow:0 3px 14px rgba(25,45,70,.045);
+}
+* {box-sizing:border-box;margin:0;padding:0}
+body {
+    font-family:'DM Sans',sans-serif;
+    color:var(--ink);
+    background:var(--background);
+    font-size:14px;
+}
+button,input,select {font:inherit}
+button {cursor:pointer}
+.app {min-height:100vh;display:flex}
+.sidebar {
+    width:252px;background:var(--navy);color:#d8e1eb;
+    position:fixed;inset:0 auto 0 0;z-index:20;
+    display:flex;flex-direction:column;padding:25px 17px;
+}
+.brand {display:flex;align-items:center;gap:12px;padding:0 9px 29px}
+.brand-mark {
+    width:39px;height:39px;border:1px solid #61758b;
+    border-radius:9px;display:grid;place-items:center;
+    color:white;font-family:Manrope;font-weight:800;font-size:17px;
+}
+.brand-name {font:800 18px Manrope;letter-spacing:1.2px;color:#fff}
+.brand-sub {font-size:9px;letter-spacing:1.6px;color:#9aafc3;margin-top:3px}
+.nav-label {
+    color:#8197ac;font-size:10px;font-weight:700;
+    letter-spacing:1.5px;padding:13px 11px 9px;
+}
+.nav-item {
+    border:0;background:transparent;color:#c4d0dc;
+    width:100%;display:flex;align-items:center;gap:12px;
+    padding:12px 13px;border-radius:6px;text-align:left;
+    margin:2px 0;font-size:13px;transition:.2s;
+}
+.nav-item:hover,.nav-item.active {background:#29425d;color:white}
+.nav-item.active {box-shadow:inset 3px 0 #5da99f}
+.nav-icon {width:18px;text-align:center;font-size:16px}
+.sidebar-bottom {margin-top:auto}
+.system-card {
+    border:1px solid #38516b;border-radius:7px;
+    padding:14px;margin-top:12px;background:#1a324c;
+}
+.system-card-title {font-size:11px;color:#aebdcb;margin-bottom:10px}
+.system-state {display:flex;align-items:center;gap:8px;color:#e5f0ee;font-size:12px}
+.dot {width:7px;height:7px;background:#52b89f;border-radius:50%;display:inline-block}
+.version {font-size:10px;color:#8197ac;margin-top:13px}
+.main {margin-left:252px;width:calc(100% - 252px);min-height:100vh}
+.topbar {
+    height:68px;background:#fff;border-bottom:1px solid var(--line);
+    display:flex;align-items:center;justify-content:space-between;
+    padding:0 38px;position:sticky;top:0;z-index:10;
+}
+.breadcrumb {font-size:12px;color:var(--muted)}
+.breadcrumb strong {color:var(--ink);font-weight:600}
+.top-right {display:flex;align-items:center;gap:18px}
+.date-label {font-size:12px;color:var(--muted)}
+.profile {
+    display:flex;align-items:center;gap:10px;
+    border-left:1px solid var(--line);padding-left:18px;
+}
+.avatar {
+    width:34px;height:34px;border-radius:50%;
+    background:#e7eef4;color:var(--navy);
+    display:grid;place-items:center;font-weight:700;font-size:12px;
+}
+.profile-name {font-size:12px;font-weight:700;color:var(--ink)}
+.profile-role {font-size:10px;color:var(--muted);margin-top:2px}
+.content {max-width:1500px;margin:auto;padding:34px 38px 45px}
+.page-heading {
+    display:flex;justify-content:space-between;align-items:flex-end;
+    gap:20px;margin-bottom:27px;
+}
+.eyebrow {
+    color:var(--blue);font-size:10px;letter-spacing:1.7px;
+    font-weight:700;text-transform:uppercase;margin-bottom:9px;
+}
+h1 {font:700 27px Manrope;color:var(--navy);letter-spacing:-.7px}
+.subtitle {color:var(--muted);font-size:12px;margin-top:7px}
+.primary-btn {
+    background:var(--navy);color:#fff;border:1px solid var(--navy);
+    padding:11px 17px;border-radius:5px;font-size:12px;
+    font-weight:600;transition:.2s;
+}
+.primary-btn:hover {background:var(--blue)}
+.secondary-btn {
+    background:white;border:1px solid var(--line);color:var(--ink);
+    padding:9px 13px;border-radius:5px;font-size:12px;
+}
+.stats {
+    display:grid;grid-template-columns:repeat(4,minmax(0,1fr));
+    gap:15px;margin-bottom:20px;
+}
+.stat-card {
+    background:white;border:1px solid var(--line);
+    border-radius:7px;padding:19px 20px;box-shadow:var(--shadow);
+}
+.stat-top {display:flex;justify-content:space-between;align-items:center}
+.stat-label {font-size:11px;color:var(--muted);font-weight:500}
+.stat-symbol {
+    width:31px;height:31px;border-radius:6px;
+    background:var(--soft);display:grid;place-items:center;
+    color:var(--blue);font-size:15px;
+}
+.stat-value {font:700 27px Manrope;color:var(--navy);margin-top:12px}
+.stat-note {font-size:10px;color:var(--muted);margin-top:5px}
+.stat-note .positive {color:var(--teal);font-weight:600}
+.panel {
+    background:white;border:1px solid var(--line);
+    border-radius:7px;box-shadow:var(--shadow);
+}
+.analytics-grid {
+    display:grid;grid-template-columns:minmax(0,1.7fr) minmax(250px,.8fr);
+    gap:16px;margin-bottom:20px;
+}
+.panel-header {
+    padding:18px 20px;border-bottom:1px solid var(--line);
+    display:flex;justify-content:space-between;align-items:center;gap:12px;
+}
+.panel-title {font:700 13px Manrope;color:var(--navy)}
+.panel-desc {font-size:10px;color:var(--muted);margin-top:4px}
+.chart-area {padding:20px}
+.chart-summary {display:flex;align-items:baseline;gap:9px;margin-bottom:18px}
+.chart-total {font:700 25px Manrope;color:var(--navy)}
+.chart-caption {font-size:10px;color:var(--muted)}
+.chart {
+    height:166px;display:flex;align-items:flex-end;gap:12px;
+    padding:8px 5px 0;border-bottom:1px solid var(--line);
+}
+.chart-column {
+    flex:1;height:100%;display:flex;flex-direction:column;
+    align-items:center;justify-content:flex-end;gap:7px;
+}
+.bar-wrap {height:125px;width:100%;display:flex;align-items:flex-end;justify-content:center}
+.bar {
+    width:min(35px,75%);min-height:3px;background:#a8c4d3;
+    border-radius:3px 3px 0 0;transition:height .4s;
+}
+.bar.today {background:var(--teal)}
+.chart-day {font-size:9px;color:var(--muted);padding-bottom:8px}
+.chart-legend {display:flex;align-items:center;gap:7px;margin-top:13px;font-size:10px;color:var(--muted)}
+.legend-dot {width:7px;height:7px;background:var(--teal);border-radius:50%}
+.insight-body {padding:20px}
+.insight-number {font:700 30px Manrope;color:var(--navy)}
+.insight-text {font-size:11px;color:var(--muted);margin-top:4px}
+.insight-divider {height:1px;background:var(--line);margin:17px 0}
+.service-row {display:flex;justify-content:space-between;align-items:center;margin:12px 0}
+.service-name {display:flex;align-items:center;gap:9px;font-size:11px;color:var(--ink)}
+.service-status {font-size:10px;color:var(--teal);font-weight:700}
+.table-panel {margin-bottom:20px}
+.table-toolbar {
+    padding:15px 20px;display:flex;justify-content:space-between;
+    align-items:center;gap:12px;flex-wrap:wrap;
+}
+.search-box {
+    position:relative;min-width:220px;max-width:310px;flex:1;
+}
+.search-box input {
+    width:100%;padding:10px 12px 10px 34px;
+    border:1px solid var(--line);border-radius:5px;
+    outline:none;font-size:11px;background:#fff;
+}
+.search-box input:focus {border-color:#7698b3}
+.search-icon {position:absolute;left:12px;top:9px;color:#8292a2}
+.table-wrap {overflow-x:auto}
+table {border-collapse:collapse;width:100%;min-width:650px}
+thead {background:#f7f9fb}
+th {
+    text-align:left;padding:12px 20px;font-size:9px;
+    color:#78889a;letter-spacing:1px;text-transform:uppercase;
+    font-weight:700;border-top:1px solid var(--line);
+    border-bottom:1px solid var(--line);
+}
+td {
+    padding:14px 20px;border-bottom:1px solid #edf0f3;
+    font-size:11px;color:#526174;
+}
+tbody tr:hover {background:#fafcfd}
+.person {font-weight:700;color:var(--navy);font-size:12px}
+.sub-cell {font-size:10px;color:#8995a3;margin-top:4px}
+.status-pill {
+    display:inline-flex;align-items:center;gap:6px;
+    background:#eaf5f2;color:#187867;border-radius:3px;
+    padding:5px 8px;font-size:9px;font-weight:700;
+}
+.status-pill:before {content:"";width:5px;height:5px;background:#299782;border-radius:50%}
+.delete-btn {
+    border:1px solid #f0dddd;background:#fffafa;color:var(--danger);
+    padding:6px 9px;border-radius:4px;font-size:10px;
+}
+.delete-btn:hover {background:#fceeee}
+.empty-state {padding:35px;text-align:center;color:var(--muted);font-size:12px}
+.table-footer {
+    padding:13px 20px;display:flex;justify-content:space-between;
+    color:var(--muted);font-size:10px;
+}
+.footer {
+    text-align:center;color:#98a3af;font-size:10px;padding:8px 0 20px;
+}
+.modal-backdrop {
+    display:none;position:fixed;inset:0;background:rgba(13,28,44,.48);
+    z-index:50;align-items:center;justify-content:center;padding:20px;
+}
+.modal-backdrop.show {display:flex}
+.modal {
+    width:100%;max-width:480px;background:white;border-radius:8px;
+    box-shadow:0 20px 70px rgba(0,0,0,.2);overflow:hidden;
+}
+.modal-head {
+    padding:20px 23px;border-bottom:1px solid var(--line);
+    display:flex;justify-content:space-between;align-items:center;
+}
+.modal-head h2 {font:700 16px Manrope;color:var(--navy)}
+.close-btn {border:0;background:none;font-size:22px;color:var(--muted)}
+.modal-body {padding:23px}
+.form-group {margin-bottom:17px}
+.form-group label {
+    display:block;font-size:11px;font-weight:700;
+    color:#405168;margin-bottom:7px;
+}
+.form-group input {
+    width:100%;border:1px solid #dce3e9;border-radius:5px;
+    padding:11px 12px;outline:none;font-size:12px;
+}
+.form-group input:focus {border-color:#7698b3}
+.form-help {font-size:10px;color:var(--muted);margin-top:5px}
+.modal-actions {display:flex;justify-content:flex-end;gap:9px;margin-top:22px}
+.toast {
+    position:fixed;right:25px;bottom:25px;z-index:100;
+    background:var(--navy);color:white;padding:13px 18px;
+    border-radius:5px;font-size:12px;box-shadow:0 8px 25px #14283f30;
+    opacity:0;transform:translateY(10px);pointer-events:none;transition:.25s;
+}
+.toast.show {opacity:1;transform:translateY(0)}
+.mobile-menu {display:none;background:none;border:0;font-size:22px;color:var(--navy)}
+@media(max-width:1100px) {
+    .stats {grid-template-columns:repeat(2,1fr)}
+    .content {padding:28px 24px}
+    .topbar {padding:0 24px}
+}
+@media(max-width:760px) {
+    .sidebar {transform:translateX(-100%);transition:.25s}
+    .sidebar.open {transform:translateX(0)}
+    .main {margin-left:0;width:100%}
+    .mobile-menu {display:block}
+    .topbar {padding:0 17px}
+    .content {padding:25px 15px}
+    .analytics-grid {grid-template-columns:1fr}
+    .page-heading {align-items:flex-start;flex-direction:column}
+    .date-label {display:none}
+}
+@media(max-width:430px) {
+    .stats {grid-template-columns:1fr 1fr;gap:9px}
+    .stat-card {padding:14px}
+    .stat-value {font-size:23px}
+    .profile {padding-left:10px}
+    .profile-role {display:none}
+    h1 {font-size:23px}
+}
+</style>
+</head>
+<body>
+
+<div class="app">
+<aside class="sidebar" id="sidebar">
+    <div class="brand">
+        <div class="brand-mark">L</div>
+        <div>
+            <div class="brand-name">LABVISIT</div>
+            <div class="brand-sub">INSTITUTIONAL SYSTEM</div>
+        </div>
+    </div>
+
+    <div class="nav-label">WORKSPACE</div>
+    <button class="nav-item active" data-target="overview">
+        <span class="nav-icon">▦</span> Overview
+    </button>
+    <button class="nav-item" data-target="registry">
+        <span class="nav-icon">▤</span> Visitor Registry
+    </button>
+    <button class="nav-item" data-target="analytics">
+        <span class="nav-icon">▥</span> Analytics & Reports
+    </button>
+
+    <div class="nav-label">SYSTEM</div>
+    <button class="nav-item" data-target="infrastructure">
+        <span class="nav-icon">⌘</span> Infrastructure
+    </button>
+
+    <div class="sidebar-bottom">
+        <div class="system-card">
+            <div class="system-card-title">SYSTEM STATUS</div>
+            <div class="system-state"><span class="dot"></span> All services operational</div>
+            <div class="version">LABVISIT v1.0.0 · Production</div>
+        </div>
+    </div>
+</aside>
+
+<main class="main">
+    <header class="topbar">
+        <div style="display:flex;align-items:center;gap:13px">
+            <button class="mobile-menu" id="mobileMenu">☰</button>
+            <div class="breadcrumb">Workspace / <strong id="breadcrumb">Overview</strong></div>
+        </div>
+        <div class="top-right">
+            <div class="date-label" id="currentDate"></div>
+            <div class="profile">
+                <div class="avatar">LA</div>
+                <div>
+                    <div class="profile-name">Laboratory Admin</div>
+                    <div class="profile-role">System Administrator</div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="content" id="overview">
+        <section class="page-heading">
+            <div>
+                <div class="eyebrow">Laboratory Information System</div>
+                <h1>Institutional Overview</h1>
+                <p class="subtitle">Monitoring aktivitas dan administrasi kunjungan laboratorium.</p>
+            </div>
+            <button class="primary-btn" id="openModal">＋ &nbsp; Registrasi Pengunjung</button>
+        </section>
+
+        <section class="stats">
+            <div class="stat-card">
+                <div class="stat-top">
+                    <span class="stat-label">Total Pengunjung</span>
+                    <span class="stat-symbol">▤</span>
+                </div>
+                <div class="stat-value" id="totalVisitors">—</div>
+                <div class="stat-note">Seluruh data terdaftar</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-top">
+                    <span class="stat-label">Kunjungan Hari Ini</span>
+                    <span class="stat-symbol">◷</span>
+                </div>
+                <div class="stat-value" id="todayVisitors">—</div>
+                <div class="stat-note">Berdasarkan tanggal kunjungan</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-top">
+                    <span class="stat-label">Data Ditampilkan</span>
+                    <span class="stat-symbol">▧</span>
+                </div>
+                <div class="stat-value" id="shownVisitors">—</div>
+                <div class="stat-note">Hasil pencarian aktif</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-top">
+                    <span class="stat-label">Status Sistem</span>
+                    <span class="stat-symbol">⌁</span>
+                </div>
+                <div class="stat-value" style="font-size:21px" id="systemStatus">Checking</div>
+                <div class="stat-note">Koneksi layanan aplikasi</div>
+            </div>
+        </section>
+
+        <section class="analytics-grid" id="analytics">
+            <div class="panel">
+                <div class="panel-header">
+                    <div>
+                        <div class="panel-title">Analisis Aktivitas Kunjungan</div>
+                        <div class="panel-desc">Distribusi jumlah kunjungan dalam tujuh hari terakhir</div>
+                    </div>
+                    <span class="status-pill">LIVE DATA</span>
+                </div>
+                <div class="chart-area">
+                    <div class="chart-summary">
+                        <span class="chart-total" id="weeklyTotal">0</span>
+                        <span class="chart-caption">kunjungan tercatat pada periode ini</span>
+                    </div>
+                    <div class="chart" id="weeklyChart"></div>
+                    <div class="chart-legend"><span class="legend-dot"></span> Jumlah pengunjung per hari</div>
+                </div>
+            </div>
+
+            <div class="panel" id="infrastructure">
+                <div class="panel-header">
+                    <div>
+                        <div class="panel-title">Infrastruktur Aplikasi</div>
+                        <div class="panel-desc">Status konektivitas layanan utama</div>
+                    </div>
+                </div>
+                <div class="insight-body">
+                    <div class="insight-number">04</div>
+                    <div class="insight-text">Komponen dalam arsitektur LABVISIT</div>
+                    <div class="insight-divider"></div>
+                    <div class="service-row">
+                        <span class="service-name">◈ &nbsp; Nginx Gateway</span>
+                        <span class="service-status" id="nginxStatus">ACTIVE</span>
+                    </div>
+                    <div class="service-row">
+                        <span class="service-name">◈ &nbsp; Flask Application</span>
+                        <span class="service-status" id="flaskStatus">CHECKING</span>
+                    </div>
+                    <div class="service-row">
+                        <span class="service-name">◈ &nbsp; PostgreSQL</span>
+                        <span class="service-status" id="dbStatus">CHECKING</span>
+                    </div>
+                    <div class="service-row">
+                        <span class="service-name">◈ &nbsp; Redis Cache</span>
+                        <span class="service-status" id="redisStatus">CHECKING</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="panel table-panel" id="registry">
+            <div class="panel-header">
+                <div>
+                    <div class="panel-title">Visitor Registry</div>
+                    <div class="panel-desc">Daftar resmi pengunjung laboratorium yang tersimpan dalam basis data.</div>
+                </div>
+                <button class="secondary-btn" id="refreshButton">↻ &nbsp; Refresh Data</button>
+            </div>
+            <div class="table-toolbar">
+                <div class="search-box">
+                    <span class="search-icon">⌕</span>
+                    <input type="search" id="searchInput" placeholder="Cari nama, institusi, atau tujuan...">
+                </div>
+                <span style="font-size:10px;color:var(--muted)">Sumber: PostgreSQL Database</span>
+            </div>
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th style="width:65px">ID</th>
+                            <th>Pengunjung</th>
+                            <th>Institusi</th>
+                            <th>Tujuan Kunjungan</th>
+                            <th>Waktu Registrasi</th>
+                            <th>Status</th>
+                            <th>Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody id="visitorTable">
+                        <tr><td colspan="7" class="empty-state">Memuat data pengunjung...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="table-footer">
+                <span id="tableInfo">Menampilkan data pengunjung</span>
+                <span>LABVISIT Registry</span>
+            </div>
+        </section>
+
+        <footer class="footer">
+            LABVISIT Institutional Information System &nbsp;·&nbsp; Laboratory Visitor Management
+        </footer>
+    </div>
+</main>
+</div>
+
+<div class="modal-backdrop" id="visitorModal">
+    <div class="modal">
+        <div class="modal-head">
+            <div>
+                <h2>Registrasi Pengunjung</h2>
+                <p class="panel-desc">Masukkan informasi kunjungan laboratorium.</p>
+            </div>
+            <button class="close-btn" id="closeModal">×</button>
+        </div>
+        <form class="modal-body" id="visitorForm">
+            <div class="form-group">
+                <label for="visitorName">Nama Lengkap</label>
+                <input id="visitorName" name="name" maxlength="120" required placeholder="Masukkan nama lengkap">
+            </div>
+            <div class="form-group">
+                <label for="visitorInstitution">Institusi / Asal</label>
+                <input id="visitorInstitution" name="institution" maxlength="150" required placeholder="Nama institusi atau organisasi">
+            </div>
+            <div class="form-group">
+                <label for="visitorPurpose">Tujuan Kunjungan</label>
+                <input id="visitorPurpose" name="purpose" maxlength="255" required placeholder="Jelaskan tujuan kunjungan">
+                <div class="form-help">Pastikan informasi yang dimasukkan telah benar.</div>
+            </div>
+            <div class="modal-actions">
+                <button type="button" class="secondary-btn" id="cancelModal">Batal</button>
+                <button type="submit" class="primary-btn" id="submitButton">Simpan Registrasi</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const API = {
+    visitors: "/api/visitors",
+    stats: "/api/stats",
+    health: "/health"
+};
+
+let allVisitors = [];
+let searchTimer;
+
+const $ = id => document.getElementById(id);
+
+function notify(message) {
+    const toast = $("toast");
+    toast.textContent = message;
+    toast.classList.add("show");
+    setTimeout(() => toast.classList.remove("show"), 3000);
+}
+
+function escapeHTML(value) {
+    return String(value ?? "").replace(/[&<>"']/g, char => ({
+        "&":"&amp;", "<":"&lt;", ">":"&gt;",
+        '"':"&quot;", "'":"&#039;"
+    })[char]);
+}
+
+function formatDate(value) {
+    if (!value) return "-";
+    const date = new Date(value);
+    if (Number.isNaN(date.getTime())) return escapeHTML(value);
+    return date.toLocaleString("id-ID", {
+        day:"2-digit", month:"short", year:"numeric",
+        hour:"2-digit", minute:"2-digit"
+    });
+}
+
+function setService(id, active) {
+    const element = $(id);
+    element.textContent = active ? "OPERATIONAL" : "UNAVAILABLE";
+    element.style.color = active ? "#168477" : "#c34f4f";
+}
+
+async function loadHealth() {
+    try {
+        const response = await fetch(API.health);
+        const data = await response.json();
+
+        const healthy = response.ok && data.status === "healthy";
+        $("systemStatus").textContent = healthy ? "Online" : "Degraded";
+        $("systemStatus").style.color = healthy ? "#168477" : "#c34f4f";
+
+        setService("flaskStatus", healthy);
+        setService("dbStatus", data.database === "connected");
+        setService("redisStatus", data.redis === "connected");
+        setService("nginxStatus", response.ok);
+    } catch (error) {
+        $("systemStatus").textContent = "Offline";
+        $("systemStatus").style.color = "#c34f4f";
+        ["flaskStatus","dbStatus","redisStatus","nginxStatus"]
+            .forEach(id => setService(id, false));
+    }
+}
+
+async function loadStats() {
+    try {
+        const response = await fetch(API.stats);
+        if (!response.ok) throw new Error("Gagal memuat statistik");
+
+        const data = await response.json();
+        $("totalVisitors").textContent = data.total_visitors ?? 0;
+        $("todayVisitors").textContent = data.today_visitors ?? 0;
+    } catch (error) {
+        notify("Statistik gagal dimuat.");
+    }
+}
+
+async function loadVisitors(keyword = "") {
+    try {
+        const url = keyword
+            ? `${API.visitors}?search=${encodeURIComponent(keyword)}`
+            : API.visitors;
+
+        const response = await fetch(url);
+        if (!response.ok) throw new Error("Gagal mengambil data");
+
+        allVisitors = await response.json();
+        renderVisitors(allVisitors);
+        renderChart(allVisitors);
+    } catch (error) {
+        $("visitorTable").innerHTML =
+            '<tr><td colspan="7" class="empty-state">Data tidak dapat dimuat. Periksa koneksi aplikasi.</td></tr>';
+        notify("Gagal memuat data pengunjung.");
+    }
+}
+
+function renderVisitors(visitors) {
+    $("shownVisitors").textContent = visitors.length;
+    $("tableInfo").textContent = `Menampilkan ${visitors.length} data pengunjung`;
+
+    if (!visitors.length) {
+        $("visitorTable").innerHTML =
+            '<tr><td colspan="7" class="empty-state">Tidak ada data pengunjung yang sesuai.</td></tr>';
+        return;
+    }
+
+    $("visitorTable").innerHTML = visitors.map(visitor => `
+        <tr>
+            <td>#${escapeHTML(visitor.id)}</td>
+            <td><div class="person">${escapeHTML(visitor.name)}</div></td>
+            <td>${escapeHTML(visitor.institution)}</td>
+            <td>${escapeHTML(visitor.purpose)}</td>
+            <td>${formatDate(visitor.visit_date)}</td>
+            <td><span class="status-pill">Terdaftar</span></td>
+            <td><button class="delete-btn" data-delete="${Number(visitor.id)}">Hapus</button></td>
+        </tr>
+    `).join("");
+}
+
+function renderChart(visitors) {
+    const now = new Date();
+    const days = [];
+
+    for (let i = 6; i >= 0; i--) {
+        const date = new Date(now);
+        date.setHours(0,0,0,0);
+        date.setDate(date.getDate() - i);
+
+        days.push({
+            date,
+            label: date.toLocaleDateString("id-ID", {weekday:"short"}),
+            count: 0
+        });
+    }
+
+    visitors.forEach(visitor => {
+        const visitDate = new Date(visitor.visit_date);
+        if (Number.isNaN(visitDate.getTime())) return;
+
+        visitDate.setHours(0,0,0,0);
+        const day = days.find(item => item.date.getTime() === visitDate.getTime());
+        if (day) day.count++;
+    });
+
+    const maximum = Math.max(1, ...days.map(day => day.count));
+    const total = days.reduce((sum, day) => sum + day.count, 0);
+
+    $("weeklyTotal").textContent = total;
+
+    $("weeklyChart").innerHTML = days.map((day, index) => {
+        const height = day.count === 0 ? 3 : Math.max(8, (day.count / maximum) * 100);
+        const today = index === 6;
+
+        return `
+            <div class="chart-column">
+                <div class="bar-wrap">
+                    <div class="bar ${today ? "today" : ""}"
+                         style="height:${height}%"
+                         title="${day.count} kunjungan"></div>
+                </div>
+                <div class="chart-day">${day.label}</div>
+            </div>
+        `;
+    }).join("");
+}
+
+async function deleteVisitor(id) {
+    if (!confirm(`Apakah Anda yakin ingin menghapus data pengunjung #${id}?`)) return;
+
+    try {
+        const response = await fetch(`${API.visitors}/${id}`, {
+            method: "DELETE"
+        });
+
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.error || "Gagal menghapus data");
+
+        notify("Data pengunjung berhasil dihapus.");
+        await refreshAll();
+    } catch (error) {
+        notify(error.message);
+    }
+}
+
+async function refreshAll() {
+    const keyword = $("searchInput").value.trim();
+    await Promise.all([
+        loadVisitors(keyword),
+        loadStats(),
+        loadHealth()
+    ]);
+}
+
+function openModal() {
+    $("visitorModal").classList.add("show");
+    $("visitorName").focus();
+}
+
+function closeModal() {
+    $("visitorModal").classList.remove("show");
+}
+
+$("openModal").addEventListener("click", openModal);
+$("closeModal").addEventListener("click", closeModal);
+$("cancelModal").addEventListener("click", closeModal);
+
+$("visitorModal").addEventListener("click", event => {
+    if (event.target === $("visitorModal")) closeModal();
+});
+
+$("visitorForm").addEventListener("submit", async event => {
+    event.preventDefault();
+
+    const button = $("submitButton");
+    button.disabled = true;
+    button.textContent = "Menyimpan...";
+
+    const payload = {
+        name: $("visitorName").value.trim(),
+        institution: $("visitorInstitution").value.trim(),
+        purpose: $("visitorPurpose").value.trim()
+    };
+
+    try {
+        const response = await fetch(API.visitors, {
+            method: "POST",
+            headers: {"Content-Type":"application/json"},
+            body: JSON.stringify(payload)
+        });
+
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.error || "Registrasi gagal");
+
+        $("visitorForm").reset();
+        closeModal();
+        notify("Registrasi pengunjung berhasil disimpan.");
+        await refreshAll();
+    } catch (error) {
+        notify(error.message);
+    } finally {
+        button.disabled = false;
+        button.textContent = "Simpan Registrasi";
+    }
+});
+
+$("visitorTable").addEventListener("click", event => {
+    const button = event.target.closest("[data-delete]");
+    if (button) deleteVisitor(button.dataset.delete);
+});
+
+$("searchInput").addEventListener("input", () => {
+    clearTimeout(searchTimer);
+    searchTimer = setTimeout(() => {
+        loadVisitors($("searchInput").value.trim());
+    }, 300);
+});
+
+$("refreshButton").addEventListener("click", refreshAll);
+
+$("mobileMenu").addEventListener("click", () => {
+    $("sidebar").classList.toggle("open");
+});
+
+document.querySelectorAll(".nav-item").forEach(button => {
+    button.addEventListener("click", () => {
+        document.querySelectorAll(".nav-item")
+            .forEach(item => item.classList.remove("active"));
+
+        button.classList.add("active");
+
+        const target = button.dataset.target;
+        const labels = {
+            overview:"Overview",
+            registry:"Visitor Registry",
+            analytics:"Analytics & Reports",
+            infrastructure:"Infrastructure"
+        };
+
+        $("breadcrumb").textContent = labels[target];
+        $(target).scrollIntoView({behavior:"smooth", block:"start"});
+        $("sidebar").classList.remove("open");
+    });
+});
+
+$("currentDate").textContent = new Date().toLocaleDateString("id-ID", {
+    weekday:"long", day:"numeric", month:"long", year:"numeric"
+});
+
+refreshAll();
+setInterval(refreshAll, 30000);
+</script>
+</body>
+</html>
